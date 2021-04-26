@@ -79,7 +79,7 @@ class ChatApplication:
         self.text_widget.configure(state=DISABLED)
         
         self.text_widget.see(END) 
-        
+        global tx
         tx.transmit(msg1)
 
 def receive_msg(rx,app):
