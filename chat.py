@@ -16,7 +16,7 @@ class ChatApplication:
     def __init__(self):
         self.window = Tk()
         self._setup_main_window()
-        tx = Transmit()
+        self.tx = Transmit()
         
     def run(self):
         self.window.mainloop()
