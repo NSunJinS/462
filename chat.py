@@ -12,11 +12,11 @@ FONT = "Helvetica 14"
 FONT_BOLD = "Helvetica 13 bold"
 
 class ChatApplication:
-    
+    tx = Transmit()
+
     def __init__(self):
         self.window = Tk()
         self._setup_main_window()
-        self.tx = Transmit()
         
     def run(self):
         self.window.mainloop()
