@@ -16,6 +16,7 @@ class ChatApplication:
     def __init__(self):
         self.window = Tk()
         self._setup_main_window()
+        tx = Transmit()
         
     def run(self):
         self.window.mainloop()
@@ -79,9 +80,7 @@ class ChatApplication:
         
         self.text_widget.see(END) 
         
-        
-
-        # TODO: TRANSMIT msg TO OTHER RASPBERRY PI
+        tx.transmit(msg1)
 
 def receive_msg(rx,app):
     buffer = rx.receive()
@@ -91,9 +90,6 @@ def receive_msg(rx,app):
 if __name__ == "__main__":
     # Create receiver obj
     rx = Receive()
-
-    # Create transmitter obj
-    tx = Transmit()
     
     app = ChatApplication()
     app.run()
