@@ -19,6 +19,8 @@ class ChatApplication:
         self.tx = Transmit()
         
     def run(self):
+#        self.window.protocol("WM_DELETE_WINDOW", lambda e: self.closeEvent(e))
+        self.window.bind('<Escape>', lambda e: self.closeEvent(e))
         self.window.mainloop()
         
     def _setup_main_window(self):
@@ -60,7 +62,11 @@ class ChatApplication:
         send_button = Button(bottom_label, text="Send", font=FONT_BOLD, width=20, bg=BG_COLOR,
                              command=lambda: self._on_enter_pressed(None))
         send_button.place(relx=0.77, rely=0.008, relheight=0.02, relwidth=0.22)
-     
+
+    def closeEvent(self, event):
+        self.window.destroy()
+        self.tx.destructor()
+
     def _on_enter_pressed(self, event):
         msg = self.msg_entry.get()
         if not msg:

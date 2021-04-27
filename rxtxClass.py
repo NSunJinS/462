@@ -15,7 +15,7 @@ class Transmit:
             self.tx.tx_code(ord(c))
             time.sleep(0.01)
 
-    def destructor():
+    def destructor(self):
         self.tx.cleanup()
 
 class Receive:
@@ -33,9 +33,12 @@ class Receive:
                     (lastTime is None or currentTime - lastTime > 350000)
             ):
                 lastTime = self.rx.rx_code_timestamp
-                if (self.rx.rx_code == 10):
+                code = self.rx.rx_code
+                if (code >127):
+                    continue
+                if (code == 10):
                     return(buff)
-                buff += (chr(self.rx.rx_code))
+                buff += (chr(code))
             time.sleep(0.01)
 
     def destructor():
