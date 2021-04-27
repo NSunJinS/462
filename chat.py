@@ -12,11 +12,11 @@ FONT = "Helvetica 14"
 FONT_BOLD = "Helvetica 13 bold"
 
 class ChatApplication:
-    tx = Transmit()
 
     def __init__(self):
         self.window = Tk()
         self._setup_main_window()
+        self.tx = Transmit()
         
     def run(self):
         self.window.mainloop()
@@ -78,20 +78,23 @@ class ChatApplication:
         self.text_widget.insert(END, msg1)
         self.text_widget.configure(state=DISABLED)
         
-        self.text_widget.see(END) 
-        global tx
-        tx.transmit(msg1)
+        self.text_widget.see(END)
+        self.tx.transmit(msg)
 
+# TODO: Function is not being called by thread
 def receive_msg(rx,app):
-    buffer = rx.receive()
-    app.text_widget.insert(END, buffer)
-
+    while True:
+        print("Ready to receive messages.")
+        buffer = rx.receive()
+        app.text_widget.configure(state=NORMAL)
+        app.text_widget.insert(END, f"Receive: {buffer}")
+        app.text_widget.configure(state=DISABLED)
 
 if __name__ == "__main__":
     # Create receiver obj
     rx = Receive()
     
     app = ChatApplication()
+    rx_thread = threading.Thread(target=receive_msg, args=(rx,app,), daemon=True)
+    rx_thread.start()
     app.run()
-
-    rx_thread = threading.Thread(target=receive_msg, args=(rx,app), daemon=True)
