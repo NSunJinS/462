@@ -7,36 +7,36 @@ from rpi_rf import RFDevice
 
 class Transmit:
     def __init__(self):
-        tx = RFDevice(17)
-        tx.enable_tx()
+        self.tx = RFDevice(17)
+        self.tx.enable_tx()
 
-    def transmit(s):
+    def transmit(self, s):
         for c in s:
-            tx.tx_code(c)
+            self.tx.tx_code(ord(c))
             time.sleep(0.01)
 
     def destructor():
-        tx.cleanup()
+        self.tx.cleanup()
 
 class Receive:
     def __init__(self):
-        rx = RFDevice(27)
-        rx.enable_rx()
+        self.rx = RFDevice(27)
+        self.rx.enable_rx()
 
-    def receive():
+    def receive(self):
         lastTime = None
         buff = ""
         while True:
-            currentTime = rx.rx_code_timestamp
+            currentTime = self.rx.rx_code_timestamp
             if (
                     currentTime != lastTime and
                     (lastTime is None or currentTime - lastTime > 350000)
             ):
-                lastTime = rx.rx_code_timestamp
-                if (rx.rx_code == 10):
+                lastTime = self.rx.rx_code_timestamp
+                if (self.rx.rx_code == 10):
                     return(buff)
-                buff += chr(rx.rx_code)
+                buff += chr(self.rx.rx_code)
             time.sleep(0.01)
 
     def destructor():
-        rx.cleanup()
+        self.rx.cleanup()
