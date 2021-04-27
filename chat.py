@@ -83,11 +83,11 @@ class ChatApplication:
 
 # TODO: Function is not being called by thread
 def receive_msg(rx,app):
+    print("Ready to receive messages.")
     while True:
-        print("Ready to receive messages.")
         buffer = rx.receive()
         app.text_widget.configure(state=NORMAL)
-        app.text_widget.insert(END, f"Receive: {buffer}")
+        app.text_widget.insert(END, f"Receive: {buffer}\n")
         app.text_widget.configure(state=DISABLED)
 
 if __name__ == "__main__":

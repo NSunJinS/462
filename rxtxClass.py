@@ -35,7 +35,7 @@ class Receive:
                 lastTime = self.rx.rx_code_timestamp
                 if (self.rx.rx_code == 10):
                     return(buff)
-                buff += chr(self.rx.rx_code)
+                buff += (chr(self.rx.rx_code))
             time.sleep(0.01)
 
     def destructor():
