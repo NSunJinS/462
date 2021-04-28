@@ -46,5 +46,5 @@ class Receive:
                 buff += (chr(code))
             time.sleep(0.01)
 
-    def destructor():
+    def destructor(self):
         self.rx.cleanup()
