@@ -87,7 +87,6 @@ class ChatApplication:
         self.text_widget.see(END)
         self.tx.transmit(msg)
 
-# TODO: Function is not being called by thread
 def receive_msg(rx,app):
     print("Ready to receive messages.")
     while True:
