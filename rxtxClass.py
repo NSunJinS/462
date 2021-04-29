@@ -41,7 +41,9 @@ class Receive:
                 code = self.rx.rx_code
                 if (code >127):
                     continue
-                if (code == 10):
+
+                # Due to repeated chars, only return if buffer contains chars other than <RETURN>
+                if (code == 10 and len(buff) > 0):
                     return(buff)
                 buff += (chr(code))
             time.sleep(0.01)

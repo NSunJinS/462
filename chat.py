@@ -2,6 +2,8 @@
 # Permission for private use granted under the MIT License
 
 import threading
+import logging
+from datetime import datetime
 from tkinter import *
 from rxtxClass import Transmit, Receive
 
@@ -94,6 +96,12 @@ def receive_msg(rx,app):
         app.text_widget.configure(state=NORMAL)
         app.text_widget.insert(END, f"Receive: {buffer}\n")
         app.text_widget.configure(state=DISABLED)
+
+        filename = "logs/log " + datetime.now().strftime("%d.%m.%Y %H:%M") + ".log"
+        fl = open(filename, "w")
+        fl.write(buffer)
+        fl.close()
+        #filecounter += 1
 
 if __name__ == "__main__":
     # Create receiver obj
