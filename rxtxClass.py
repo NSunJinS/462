@@ -14,7 +14,7 @@ class Transmit:
     def transmit(self, s):
         # Iterate across string and transmit ASCII chars
         for c in s:
-            self.tx.tx_code(ord(c))
+            self.tx.tx_code(ord(c),1)
             time.sleep(0.01)
 
     def destructor(self):
@@ -38,6 +38,11 @@ class Receive:
             # Check for new received characters
             if (self.currentTime != self.lastTime):
                 self.lastTime = self.rx.rx_code_timestamp
+                protocol = self.rx.rx_proto
+
+                if (protocol != 1):
+                    continue
+
                 code = self.rx.rx_code
                 if (code >127):
                     continue
