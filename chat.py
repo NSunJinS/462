@@ -7,7 +7,7 @@ from datetime import datetime
 from tkinter import *
 from rxtxClass import Transmit, Receive
 from statistics import mode
-# import rsa
+import rsa
 
 BG_COLOR = "#FFFFFF"
 TEXT_COLOR = "#000000"
@@ -20,10 +20,14 @@ class ChatApplication:
     def __init__(self):
         self.window = Tk()
         self._setup_main_window()
+
+        # Start receiver thread
         self.rx = Receive()
         rx_thread = threading.Thread(target=self.receive_msg, args=(self.rx,), daemon=True)
         rx_thread.start()
         self.tx = Transmit()
+        self.tx_rsa_key = rsa.RSAKey()
+        self.rx_rsa_key = rsa.RSAKey()
         
     def run(self):
 #        self.window.protocol("WM_DELETE_WINDOW", lambda e: self.closeEvent(e))
@@ -65,10 +69,23 @@ class ChatApplication:
         self.msg_entry.focus()
         self.msg_entry.bind("<Return>", self._on_enter_pressed)
         
+        # Connect button
+        connect_button = Button(bottom_label, text="Connect", font=FONT_BOLD, width=20, bg=BG_COLOR,
+                             command=lambda: self._on_connect_pressed(None))
+        connect_button.place(relx=0.77, rely=0.001, relheight=0.02, relwidth=0.22)
+
         # send button
         send_button = Button(bottom_label, text="Send", font=FONT_BOLD, width=20, bg=BG_COLOR,
                              command=lambda: self._on_enter_pressed(None))
-        send_button.place(relx=0.77, rely=0.008, relheight=0.02, relwidth=0.22)
+        send_button.place(relx=0.77, rely=0.021, relheight=0.02, relwidth=0.22)
+
+    def _on_connect_pressed(self, event):
+        # Generate RSA key and transmit the public key and n
+        # This key will be used to RECEIVE messages because we have the private key
+        self.rx_rsa_key.generateKey()
+        self.tx.transmit_key(self.rx_rsa_key)
+
+        return
 
     def closeEvent(self, event):
         self.window.destroy()
@@ -84,6 +101,18 @@ class ChatApplication:
             msg = msg[0:-2]
 
         self.msg_entry.delete(0, END)
+
+        '''
+        if self.tx_rsa_key is None:
+            err_msg = "No connection established. Please try connecting first.\n"
+
+            self.text_widget.configure(state=NORMAL)
+            self.text_widget.insert(END, err_msg)
+            self.text_widget.configure(state=DISABLED)
+            self.text_widget.see(END)
+            return
+        '''
+
         msg1 = f"You: {msg}\n"
         self.text_widget.configure(state=NORMAL)
         self.text_widget.insert(END, msg1)
@@ -95,11 +124,16 @@ class ChatApplication:
         # ctext = rsa.encryptMsg(msg.encode('utf-8'))[0] + b"\x0A"
         
         # Turn off receiver while transmitting
-        self.rx.disable()
+        #self.rx.disable()
         
-        self.tx.transmit(msg + "\n")
+        ''' Comment out when second transmitter/receiver is set up
+        ciphertext = self.tx_rsa_key.encryptMsg(msg)
+        self.tx.transmit(ciphertext)
+        '''
 
-        self.rx.enable()
+        self.tx.transmit(msg)
+
+        #self.rx.enable()
 
     def receive_msg(self,rx):
         print("Ready to receive messages.")
@@ -107,6 +141,15 @@ class ChatApplication:
         while True:
             
             code = rx.receive()
+
+            # Check for public key transmission
+            print(code)
+            if mode(code[0]) == 2:
+                self.tx_rsa_key = rsa.RSAKey()
+                self.tx_rsa_key.n = mode(code[1])
+                self.tx_rsa_key.e = mode(code[2])
+
+                continue
 
             for c in code:
                 buffer += chr(mode(c))

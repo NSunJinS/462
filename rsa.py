@@ -64,13 +64,6 @@ class RSAKey:
         # Find d
         self.d = modInverse(self.e, m)
 
-        print(f"p: {self.p}")
-        print(f"q: {self.q}")
-        print(f"n: {self.n}")
-        print(f"e: {self.e}")
-        print(f"d: {self.d}")
-
-
     def getPublicKey(self):
         return self.e
 

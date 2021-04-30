@@ -11,6 +11,22 @@ class Transmit:
         self.tx = RFDevice(17)
         self.tx.enable_tx()
 
+    def transmit_key(self, key):
+        print("Transmitting key")
+        self.tx.tx_code(2,1) # specify key transmission
+        time.sleep(0.01)
+        self.tx.tx_code(10,1)
+        time.sleep(0.01)
+        self.tx.tx_code(key.n,1)
+        time.sleep(0.01)
+        self.tx.tx_code(10,1)
+        time.sleep(0.01)
+        self.tx.tx_code(key.e,1)
+        time.sleep(0.01)
+        self.tx.tx_code(10,1)
+        time.sleep(0.01)
+        self.tx.tx_code(23,1)
+
     def transmit(self, s):
         # Iterate across string and transmit ASCII chars
         for c in s:
@@ -55,7 +71,7 @@ class Receive:
 
                 code = self.rx.rx_code
                 
-                
+                print(code)
                 # Due to repeated chars, only return if buffer contains chars other than <RETURN>
                 if (code == 10 and len(charBuff) > 0):
                     msgBuff.append(charBuff)
