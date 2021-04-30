@@ -33,6 +33,12 @@ class Receive:
         self.currentTime = None
         self.lastTime = None
 
+    def disable(self):
+        self.rx.disable_rx()
+    
+    def enable(self):
+        self.rx.enable_rx()
+
     def receive(self):
         msgBuff = []
         charBuff = []

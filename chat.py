@@ -93,7 +93,13 @@ class ChatApplication:
 
         # Encrypt message
         # ctext = rsa.encryptMsg(msg.encode('utf-8'))[0] + b"\x0A"
+        
+        # Turn off receiver while transmitting
+        self.rx.disable()
+        
         self.tx.transmit(msg + "\n")
+
+        self.rx.enable()
 
     def receive_msg(self,rx):
         print("Ready to receive messages.")
