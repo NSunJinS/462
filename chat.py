@@ -6,6 +6,8 @@ import logging
 from datetime import datetime
 from tkinter import *
 from rxtxClass import Transmit, Receive
+from statistics import mode
+# import rsa
 
 BG_COLOR = "#FFFFFF"
 TEXT_COLOR = "#000000"
@@ -18,6 +20,9 @@ class ChatApplication:
     def __init__(self):
         self.window = Tk()
         self._setup_main_window()
+        self.rx = Receive()
+        rx_thread = threading.Thread(target=self.receive_msg, args=(self.rx,), daemon=True)
+        rx_thread.start()
         self.tx = Transmit()
         
     def run(self):
@@ -68,46 +73,52 @@ class ChatApplication:
     def closeEvent(self, event):
         self.window.destroy()
         self.tx.destructor()
+        # self.rx.destructor()
 
     def _on_enter_pressed(self, event):
         msg = self.msg_entry.get()
         if not msg:
             return
-        
-        # Check that msg ends in <RETURN>
-        msg = msg + "\n"
 
-        if ord(msg[-1]) != 10:
-            print("This message does not end in <RETURN>")
+        if msg[-1] == "\n":
+            msg = msg[0:-2]
 
         self.msg_entry.delete(0, END)
-        msg1 = f"You: {msg}"
+        msg1 = f"You: {msg}\n"
         self.text_widget.configure(state=NORMAL)
         self.text_widget.insert(END, msg1)
         self.text_widget.configure(state=DISABLED)
         
         self.text_widget.see(END)
-        self.tx.transmit(msg)
 
-def receive_msg(rx,app):
-    print("Ready to receive messages.")
-    while True:
-        buffer = rx.receive()
-        app.text_widget.configure(state=NORMAL)
-        app.text_widget.insert(END, f"Receive: {buffer}\n")
-        app.text_widget.configure(state=DISABLED)
+        # Encrypt message
+        # ctext = rsa.encryptMsg(msg.encode('utf-8'))[0] + b"\x0A"
+        self.tx.transmit(msg + "\n")
 
-        filename = "logs/log " + datetime.now().strftime("%d.%m.%Y %H:%M") + ".log"
-        fl = open(filename, "w")
-        fl.write(buffer)
-        fl.close()
-        #filecounter += 1
+    def receive_msg(self,rx):
+        print("Ready to receive messages.")
+        buffer = ""
+        while True:
+            
+            code = rx.receive()
+
+            for c in code:
+                buffer += chr(mode(c))
+            
+            self.text_widget.configure(state=NORMAL)
+            self.text_widget.insert(END, f"Receive: {buffer}\n")
+            self.text_widget.configure(state=DISABLED)
+
+            buffer = ""
+            # filename = "logs/log " + datetime.now().strftime("%d.%m.%Y %H:%M") + ".log"
+            # fl = open(filename, "w")
+            # fl.write(buffer)
+            # fl.close()
+            #filecounter += 1
 
 if __name__ == "__main__":
-    # Create receiver obj
-    rx = Receive()
+    # Init RSA keys
+    # rsa.initKey()
     
     app = ChatApplication()
-    rx_thread = threading.Thread(target=receive_msg, args=(rx,app,), daemon=True)
-    rx_thread.start()
     app.run()

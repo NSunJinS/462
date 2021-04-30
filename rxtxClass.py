@@ -16,6 +16,10 @@ class Transmit:
         for c in s:
             self.tx.tx_code(ord(c),1)
             time.sleep(0.01)
+            self.tx.tx_code(10,1)
+            time.sleep(0.01)
+        #Send ascii ETB (End of Transmission block) 
+        self.tx.tx_code(23,1)
 
     def destructor(self):
         self.tx.cleanup()
@@ -30,8 +34,8 @@ class Receive:
         self.lastTime = None
 
     def receive(self):
-        lastTime = None
-        buff = ""
+        msgBuff = []
+        charBuff = []
         while True:
             self.currentTime = self.rx.rx_code_timestamp
             
@@ -44,13 +48,20 @@ class Receive:
                     continue
 
                 code = self.rx.rx_code
-                if (code >127):
-                    continue
-
+                
+                
                 # Due to repeated chars, only return if buffer contains chars other than <RETURN>
-                if (code == 10 and len(buff) > 0):
-                    return(buff)
-                buff += (chr(code))
+                if (code == 10 and len(charBuff) > 0):
+                    msgBuff.append(charBuff)
+                    charBuff = []
+                    continue
+                elif (code == 10):
+                    continue
+                if (code == 23 and len(msgBuff) > 0):
+                    return msgBuff
+                elif( code == 23):
+                    continue
+                charBuff.append(code)
             time.sleep(0.01)
 
     def destructor(self):
