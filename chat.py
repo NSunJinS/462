@@ -107,7 +107,6 @@ class ChatApplication:
 
         self.msg_entry.delete(0, END)
 
-        '''
         if self.tx_rsa_key is None:
             err_msg = "No connection established. Please try connecting first.\n"
 
@@ -116,8 +115,7 @@ class ChatApplication:
             self.text_widget.configure(state=DISABLED)
             self.text_widget.see(END)
             return
-        '''
-
+        
         msg1 = f"You: {msg}\n"
         self.text_widget.configure(state=NORMAL)
         self.text_widget.insert(END, msg1)
@@ -130,11 +128,6 @@ class ChatApplication:
         
         # Turn off receiver while transmitting
         self.rx.disable()
-        
-        ''' Comment out when second transmitter/receiver is set up
-        ciphertext = self.tx_rsa_key.encryptMsg(msg)
-        self.tx.transmit(ciphertext)
-        '''
 
         self.tx.transmit(ctext)
 
@@ -149,6 +142,7 @@ class ChatApplication:
 
             # Check for public key transmission
             print(code)
+            print(True in [x > 1000000 for x in code[0]])
             if True in [x > 1000000 for x in code[0]]:
                 self.tx_rsa_key = rsa.RSAKey()
                 self.tx_rsa_key.n = mode(code[1])
