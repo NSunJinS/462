@@ -72,7 +72,7 @@ class RSAKey:
 
     # Assumes msg is a string of chars
     def encryptMsg(self,msg):
-        return [ord(msg[x])**self.e % self.n for x in range(0, len(msg))]
+        return [msg[x]**self.e % self.n for x in range(0, len(msg))]
 
     # Assumes ctext is an array of integers
     def decryptMsg(self,ctext):

@@ -30,7 +30,7 @@ class Transmit:
     def transmit(self, s):
         # Iterate across string and transmit ASCII chars
         for c in s:
-            self.tx.tx_code(ord(c),1)
+            self.tx.tx_code(c,1)
             time.sleep(0.01)
             self.tx.tx_code(10,1)
             time.sleep(0.01)

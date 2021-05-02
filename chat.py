@@ -121,7 +121,7 @@ class ChatApplication:
         self.text_widget.see(END)
 
         # Encrypt message
-        ctext = rsa.encryptMsg(msg.encode('utf-8'))[0] + b"\x0A"
+        ctext = (self.tx_rsa_key.encryptMsg(msg.encode('utf-8')))
         
         # Turn off receiver while transmitting
         self.rx.disable()
@@ -142,10 +142,6 @@ class ChatApplication:
             
             code = rx.receive()
 
-            
-            plaintext = [mode(x) for x in range plaintext]            
-            plaintext = self.rx_rsa_key.decryptMsg(code)
-
             # Check for public key transmission
             if mode(code[0]) == 2:
                 self.tx_rsa_key = rsa.RSAKey()
@@ -154,8 +150,11 @@ class ChatApplication:
 
                 continue
 
-            for c in code:
-                buffer += chr(plaintext)
+            code = [mode(x) for x in code]            
+            plaintext = self.rx_rsa_key.decryptMsg(code)
+
+            for c in plaintext:
+                buffer += chr(c)
             
             self.text_widget.configure(state=NORMAL)
             self.text_widget.insert(END, f"Receive: {buffer}\n")
