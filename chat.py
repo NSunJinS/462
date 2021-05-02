@@ -150,7 +150,14 @@ class ChatApplication:
 
                 continue
 
-            code = [mode(x) for x in code]            
+            try:
+                code = [mode(x) for x in code]            
+            except:
+                errMsg = "Preceive error! mode() failed because bit errors were equally as common with the correfct bit."
+                self.text_widget.configure(state=NORMAL)
+                self.text_widget.insert(END, f"{errMsg}\n")
+                self.text_widget.configure(state=DISABLED)
+
             plaintext = self.rx_rsa_key.decryptMsg(code)
 
             for c in plaintext:
