@@ -150,22 +150,21 @@ class ChatApplication:
                     self.text_widget.insert(END, f"{errMsg}\n")
                     self.text_widget.configure(state = DISABLED)
                     continue
-                
+
                 self.tx_rsa_key = rsa.RSAKey()
                 self.tx_rsa_key.n = mode(code[1])
                 self.tx_rsa_key.e = mode(code[2])
                 print("Key established. You're good to transmit messages now!")
                 continue
+            
+            codeClean = []
+            for element in code:
+                try:
+                    codeClean.append(mode(element))
+                except:
+                    codeClean.append(element[0])
 
-            try:
-                code = [mode(x) for x in code]            
-            except:
-                errMsg = "Preceive error! mode() failed because bit errors were equally as common with the correfct bit."
-                self.text_widget.configure(state=NORMAL)
-                self.text_widget.insert(END, f"{errMsg}\n")
-                self.text_widget.configure(state=DISABLED)
-
-            plaintext = self.rx_rsa_key.decryptMsg(code)
+            plaintext = self.rx_rsa_key.decryptMsg(codeClean)
             print(f"Decrypted the following plaintext: {plaintext}")
 
             for c in plaintext:
