@@ -13,7 +13,7 @@ class Transmit:
 
     def transmit_key(self, key):
         print("Transmitting key")
-        self.tx.tx_code(2,1) # specify key transmission
+        self.tx.tx_code(5000000,1) # specify key transmission
         time.sleep(0.01)
         self.tx.tx_code(10,1)
         time.sleep(0.01)

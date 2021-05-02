@@ -83,7 +83,12 @@ class ChatApplication:
         # Generate RSA key and transmit the public key and n
         # This key will be used to RECEIVE messages because we have the private key
         self.rx_rsa_key.generateKey()
+
+        self.rx.disable()
+
         self.tx.transmit_key(self.rx_rsa_key)
+
+        self.rx.enable()
 
         return
 
