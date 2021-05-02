@@ -141,13 +141,13 @@ class ChatApplication:
             code = rx.receive()
 
             # Check for public key transmission
-            print(code)
-            print(True in [x > 1000000 for x in code[0]])
+            print(f"Received the following array: {code}")
+            print(f"Boolean expression: {True in [x > 1000000 for x in code[0]]}")
             if True in [x > 1000000 for x in code[0]]:
                 self.tx_rsa_key = rsa.RSAKey()
                 self.tx_rsa_key.n = mode(code[1])
                 self.tx_rsa_key.e = mode(code[2])
-
+                print("Key established. You're good to transmit messages now!")
                 continue
 
             try:
@@ -159,7 +159,8 @@ class ChatApplication:
                 self.text_widget.configure(state=DISABLED)
 
             plaintext = self.rx_rsa_key.decryptMsg(code)
-
+            print(f"Decrypted the following plaintext: {plaintext}")
+            
             for c in plaintext:
                 buffer += chr(c)
             

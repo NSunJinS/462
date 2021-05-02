@@ -16,15 +16,15 @@ class Transmit:
         self.tx.tx_code(5000000,1) # specify key transmission
         time.sleep(0.01)
         self.tx.tx_code(10,1)
-        time.sleep(0.01)
+        time.sleep(0.05)
         self.tx.tx_code(key.n,1)
-        time.sleep(0.01)
+        time.sleep(0.05)
         self.tx.tx_code(10,1)
-        time.sleep(0.01)
+        time.sleep(0.05)
         self.tx.tx_code(key.e,1)
-        time.sleep(0.01)
+        time.sleep(0.05)
         self.tx.tx_code(10,1)
-        time.sleep(0.01)
+        time.sleep(0.05)
         self.tx.tx_code(23,1)
 
     def transmit(self, s):
@@ -65,8 +65,9 @@ class Receive:
             if (self.currentTime != self.lastTime):
                 self.lastTime = self.rx.rx_code_timestamp
                 protocol = self.rx.rx_proto
+                pulseLength = self.rx.rx_pulselength
 
-                if (protocol != 1):
+                if (protocol != 1 or (pulseLength < 340 or pulseLength > 360)):
                     continue
 
                 code = self.rx.rx_code
