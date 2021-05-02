@@ -142,8 +142,15 @@ class ChatApplication:
 
             # Check for public key transmission
             print(f"Received the following array: {code}")
-            print(f"Boolean expression: {True in [x > 1000000 for x in code[0]]}")
             if True in [x > 1000000 for x in code[0]]:
+                # Verify the key array was received properly
+                if len(code) < 3:
+                    errMsg = "Key was received incorrectly. Retry!"
+                    self.text_widget.configure(state=NORMAL)
+                    self.text_widget.insert(END, f"{errMsg}\n")
+                    self.text_widget.configure(state = DISABLED)
+                    continue
+                
                 self.tx_rsa_key = rsa.RSAKey()
                 self.tx_rsa_key.n = mode(code[1])
                 self.tx_rsa_key.e = mode(code[2])
@@ -160,7 +167,7 @@ class ChatApplication:
 
             plaintext = self.rx_rsa_key.decryptMsg(code)
             print(f"Decrypted the following plaintext: {plaintext}")
-            
+
             for c in plaintext:
                 buffer += chr(c)
             
