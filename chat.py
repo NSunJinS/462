@@ -143,7 +143,8 @@ class ChatApplication:
             code = rx.receive()
 
             # Check for public key transmission
-            if mode(code[0]) == 2:
+            print(code)
+            if True in [x > 1000000 for x in code[0]]:
                 self.tx_rsa_key = rsa.RSAKey()
                 self.tx_rsa_key.n = mode(code[1])
                 self.tx_rsa_key.e = mode(code[2])
